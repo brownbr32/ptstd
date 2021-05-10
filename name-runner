@@ -1,0 +1,17 @@
+#!/bin/bash
+
+file=${1:-given-names}
+echo $file
+success=0
+
+rm $file.out
+
+while read -r name; do
+  ct=$(curl "http://ws.name.standards.service.dev.us-east-1.dev.fslocal.org/names?name=$name" | grep -c $name)
+  echo $name, $ct >> $file.out
+  success=$((ct+success))
+done < $file.in
+
+echo $success, `grep -c , $file.out` >> $file.out
+echo good, total >> $file.out
+tail -n 2 $file.out
